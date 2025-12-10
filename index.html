@@ -24,6 +24,8 @@
             --text-light: #f0f0f0;
             --text-gray: #b0b0b0;
             --blue-verified: #1d9bf0;
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
         }
 
         body {
@@ -37,6 +39,9 @@
             max-width: 600px;
             margin: 0 auto;
             padding: 15px;
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 40px);
         }
 
         /* 头部区域 */
@@ -321,6 +326,7 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
+            margin-bottom: 20px;
         }
 
         .post {
@@ -412,6 +418,74 @@
             color: var(--accent-pink);
         }
 
+        /* 数据备份区域 - 作为普通内容块 */
+        .backup-section {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            border-left: 4px solid var(--accent-pink);
+            margin-top: 10px;
+            margin-bottom: 30px;
+        }
+
+        .backup-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: var(--soft-pink);
+        }
+
+        .backup-actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .backup-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .export-btn {
+            background-color: var(--success-green);
+            color: white;
+        }
+
+        .export-btn:hover {
+            background-color: #0da271;
+            transform: translateY(-2px);
+        }
+
+        .import-btn {
+            background-color: var(--warning-orange);
+            color: white;
+        }
+
+        .import-btn:hover {
+            background-color: #e59409;
+            transform: translateY(-2px);
+        }
+
+        .backup-info {
+            padding-top: 15px;
+            border-top: 1px solid var(--light-gray);
+            color: var(--text-gray);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             .container {
@@ -439,13 +513,21 @@
                 font-size: 18px;
             }
             
-            .post-creator, .post {
+            .post-creator, .post, .backup-section {
                 padding: 15px;
+            }
+            
+            .backup-actions {
+                flex-direction: column;
+            }
+            
+            .backup-btn {
+                width: 100%;
             }
         }
 
         /* 上传按钮隐藏 */
-        #avatar-upload, #cover-upload, #image-upload {
+        #avatar-upload, #cover-upload, #image-upload, #import-file {
             display: none;
         }
 
@@ -511,11 +593,137 @@
                 opacity: 0;
             }
         }
+        
+        /* 模态框样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .modal {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            color: var(--soft-pink);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-gray);
+            font-size: 24px;
+            cursor: pointer;
+            line-height: 1;
+        }
+        
+        .modal-content {
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-btn.confirm {
+            background-color: var(--accent-pink);
+            color: white;
+        }
+        
+        .modal-btn.cancel {
+            background-color: var(--light-gray);
+            color: white;
+        }
+        
+        /* 页面底部提示 */
+        .page-end {
+            text-align: center;
+            color: var(--text-gray);
+            font-size: 14px;
+            margin-top: 10px;
+            margin-bottom: 30px;
+            padding: 15px;
+            border-top: 1px solid var(--light-gray);
+        }
     </style>
 </head>
 <body>
     <!-- 浪漫背景点缀 -->
     <div class="romantic-decoration" id="decoration"></div>
+    
+    <!-- 确认模态框 -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="modal-title">确认操作</span>
+                </div>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div class="modal-content" id="modal-content">
+                您确定要执行此操作吗？
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" id="modal-cancel">取消</button>
+                <button class="modal-btn confirm" id="modal-confirm">确认</button>
+            </div>
+        </div>
+    </div>
 
     <div class="container">
         <!-- 头部区域 -->
@@ -611,6 +819,35 @@
                 <p>发布第一条浪漫记录吧！</p>
             </div>
         </section>
+        
+        <!-- 数据备份区域 - 作为普通内容块放在动态列表之后 -->
+        <section class="backup-section">
+            <div class="backup-title">
+                <i class="fas fa-shield-alt"></i>
+                <span>数据备份与恢复</span>
+            </div>
+            <div class="backup-actions">
+                <button class="backup-btn export-btn" id="export-btn">
+                    <i class="fas fa-download"></i>
+                    <span>导出全部数据</span>
+                </button>
+                <button class="backup-btn import-btn" id="import-btn">
+                    <i class="fas fa-upload"></i>
+                    <span>从备份恢复</span>
+                </button>
+            </div>
+            <div class="backup-info">
+                <p><i class="fas fa-info-circle"></i> 数据会自动保存在浏览器中。建议每周备份一次，并将备份文件保存到iCloud Drive。</p>
+                <p>上次备份: <span id="last-backup">从未备份</span></p>
+            </div>
+            <input type="file" id="import-file" accept=".json">
+        </section>
+        
+        <!-- 页面底部提示 -->
+        <div class="page-end">
+            <i class="fas fa-heart" style="color: var(--accent-pink);"></i>
+            <span>Sirius＆Lovisa 恋爱日记 - 记录每一个心动瞬间</span>
+        </div>
     </div>
 
     <script>
@@ -664,6 +901,7 @@
             const savedPosts = localStorage.getItem('siriusLovisaPosts');
             const savedAvatar = localStorage.getItem('siriusLovisaAvatar');
             const savedCover = localStorage.getItem('siriusLovisaCover');
+            const lastBackup = localStorage.getItem('siriusLovisaLastBackup');
             
             if (savedPosts) {
                 posts = JSON.parse(savedPosts);
@@ -679,6 +917,10 @@
                 document.getElementById('cover-img').src = savedCover;
                 document.getElementById('cover-img').style.display = 'block';
                 document.querySelector('.cover-placeholder').style.display = 'none';
+            }
+            
+            if (lastBackup) {
+                document.getElementById('last-backup').textContent = new Date(lastBackup).toLocaleString('zh-CN');
             }
             
             updatePostCount();
@@ -759,7 +1001,7 @@
             const imageElement = imagePreview.querySelector('img');
             
             if (!postText && !imageElement) {
-                alert('请输入内容或添加图片');
+                showNotification('请输入内容或添加图片', 'warning');
                 return;
             }
             
@@ -787,18 +1029,22 @@
             imagePreview.innerHTML = '';
             
             // 显示发布成功提示
-            showNotification('动态发布成功！');
+            showNotification('动态发布成功！', 'success');
         }
 
         // 删除帖子
         function deletePost(postId) {
-            if (confirm('确定要删除这条动态吗？')) {
-                posts = posts.filter(post => post.id !== postId);
-                saveData();
-                renderPosts();
-                updatePostCount();
-                showNotification('动态已删除');
-            }
+            showConfirmModal(
+                '删除动态',
+                '确定要删除这条动态吗？此操作不可撤销。',
+                () => {
+                    posts = posts.filter(post => post.id !== postId);
+                    saveData();
+                    renderPosts();
+                    updatePostCount();
+                    showNotification('动态已删除', 'success');
+                }
+            );
         }
 
         // 点赞/取消点赞
@@ -826,7 +1072,13 @@
             if (!file) return;
             
             if (!file.type.startsWith('image/')) {
-                alert('请选择图片文件');
+                showNotification('请选择图片文件', 'warning');
+                return;
+            }
+            
+            // 检查文件大小（限制5MB）
+            if (file.size > 5 * 1024 * 1024) {
+                showNotification('图片大小不能超过5MB', 'warning');
                 return;
             }
             
@@ -840,13 +1092,13 @@
                     document.getElementById('avatar-img').style.display = 'block';
                     document.querySelector('.avatar-placeholder').style.display = 'none';
                     localStorage.setItem('siriusLovisaAvatar', result);
-                    showNotification('头像更新成功');
+                    showNotification('头像更新成功', 'success');
                 } else if (type === 'cover') {
                     document.getElementById('cover-img').src = result;
                     document.getElementById('cover-img').style.display = 'block';
                     document.querySelector('.cover-placeholder').style.display = 'none';
                     localStorage.setItem('siriusLovisaCover', result);
-                    showNotification('封面更新成功');
+                    showNotification('封面更新成功', 'success');
                 } else if (type === 'post') {
                     const preview = document.getElementById('image-preview');
                     preview.innerHTML = `
@@ -867,30 +1119,176 @@
             document.getElementById('image-upload').value = '';
         }
 
-        // 显示通知
-        function showNotification(message) {
+        // ==================== 备份与恢复功能 ====================
+        
+        // 导出所有数据
+        function exportAllData() {
+            const avatar = localStorage.getItem('siriusLovisaAvatar') || '';
+            const cover = localStorage.getItem('siriusLovisaCover') || '';
+            const postsData = JSON.parse(localStorage.getItem('siriusLovisaPosts') || '[]');
+            
+            const exportData = {
+                version: '1.0',
+                exportDate: new Date().toISOString(),
+                appName: 'Sirius＆Lovisa 恋爱日记',
+                data: {
+                    posts: postsData,
+                    avatar: avatar,
+                    cover: cover
+                }
+            };
+            
+            // 创建JSON文件
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            // 创建下载链接
+            const downloadUrl = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = `Sirius-Lovisa-备份-${new Date().toISOString().split('T')[0]}.json`;
+            
+            // 触发下载
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // 清理URL
+            setTimeout(() => URL.revokeObjectURL(downloadUrl), 100);
+            
+            // 更新最后备份时间
+            localStorage.setItem('siriusLovisaLastBackup', new Date().toISOString());
+            document.getElementById('last-backup').textContent = new Date().toLocaleString('zh-CN');
+            
+            showNotification('数据导出成功！请将备份文件保存到安全位置。', 'success');
+        }
+        
+        // 从备份文件恢复数据
+        function importFromBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const backupData = JSON.parse(e.target.result);
+                    
+                    // 验证备份文件格式
+                    if (!backupData.version || !backupData.data) {
+                        showNotification('备份文件格式不正确', 'error');
+                        return;
+                    }
+                    
+                    showConfirmModal(
+                        '恢复备份',
+                        '此操作将用备份数据替换当前所有数据。确定要继续吗？',
+                        () => {
+                            // 恢复数据
+                            if (backupData.data.posts) {
+                                localStorage.setItem('siriusLovisaPosts', JSON.stringify(backupData.data.posts));
+                            }
+                            
+                            if (backupData.data.avatar) {
+                                localStorage.setItem('siriusLovisaAvatar', backupData.data.avatar);
+                            }
+                            
+                            if (backupData.data.cover) {
+                                localStorage.setItem('siriusLovisaCover', backupData.data.cover);
+                            }
+                            
+                            // 更新最后备份时间
+                            if (backupData.exportDate) {
+                                localStorage.setItem('siriusLovisaLastBackup', backupData.exportDate);
+                            }
+                            
+                            // 重新加载数据并更新界面
+                            loadData();
+                            
+                            showNotification('数据恢复成功！', 'success');
+                        }
+                    );
+                } catch (error) {
+                    console.error('导入备份时出错:', error);
+                    showNotification('无法读取备份文件，请检查文件格式', 'error');
+                }
+            };
+            
+            reader.onerror = function() {
+                showNotification('读取文件时出错', 'error');
+            };
+            
+            reader.readAsText(file);
+            
+            // 清空input，以便再次选择同一文件
+            event.target.value = '';
+        }
+        
+        // ==================== 模态框功能 ====================
+        
+        let confirmCallback = null;
+        
+        function showConfirmModal(title, content, callback) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-content').textContent = content;
+            confirmCallback = callback;
+            
+            const modal = document.getElementById('confirm-modal');
+            modal.classList.add('active');
+        }
+        
+        function hideConfirmModal() {
+            const modal = document.getElementById('confirm-modal');
+            modal.classList.remove('active');
+            confirmCallback = null;
+        }
+        
+        // ==================== 通知功能 ====================
+        
+        function showNotification(message, type = 'info') {
             // 创建通知元素
             const notification = document.createElement('div');
+            
+            // 根据类型设置颜色
+            let bgColor, icon;
+            switch(type) {
+                case 'success':
+                    bgColor = 'var(--success-green)';
+                    icon = 'fas fa-check-circle';
+                    break;
+                case 'warning':
+                    bgColor = 'var(--warning-orange)';
+                    icon = 'fas fa-exclamation-triangle';
+                    break;
+                case 'error':
+                    bgColor = '#ef4444';
+                    icon = 'fas fa-times-circle';
+                    break;
+                default:
+                    bgColor = 'var(--accent-pink)';
+                    icon = 'fas fa-info-circle';
+            }
+            
             notification.style.cssText = `
                 position: fixed;
                 top: 20px;
                 right: 20px;
-                background-color: var(--card-bg);
-                color: var(--text-light);
+                background-color: ${bgColor};
+                color: white;
                 padding: 15px 20px;
                 border-radius: 10px;
                 box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
                 z-index: 1000;
-                border-left: 4px solid var(--accent-pink);
+                display: flex;
+                align-items: center;
+                gap: 10px;
                 animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
                 max-width: 300px;
             `;
             
             notification.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-check-circle" style="color: var(--accent-pink);"></i>
-                    <span>${message}</span>
-                </div>
+                <i class="${icon}"></i>
+                <span>${message}</span>
             `;
             
             document.body.appendChild(notification);
@@ -903,7 +1301,8 @@
             }, 3000);
         }
 
-        // 初始化
+        // ==================== 初始化 ====================
+        
         document.addEventListener('DOMContentLoaded', function() {
             // 创建浪漫背景
             createRomanticDecoration();
@@ -932,18 +1331,46 @@
                 document.getElementById('publish-btn').disabled = !text && !hasImage;
             });
             
+            // 导出按钮事件
+            document.getElementById('export-btn').addEventListener('click', exportAllData);
+            
+            // 导入按钮事件
+            document.getElementById('import-btn').addEventListener('click', function() {
+                document.getElementById('import-file').click();
+            });
+            
+            // 导入文件选择事件
+            document.getElementById('import-file').addEventListener('change', importFromBackup);
+            
             // 模拟关注按钮点击
             document.querySelector('.follow-btn').addEventListener('click', function() {
                 if (this.innerHTML.includes('Following')) {
                     this.innerHTML = '<i class="fas fa-plus"></i> Follow';
                     this.classList.remove('follow-btn');
                     this.classList.add('message-btn');
-                    showNotification('已取消关注');
+                    showNotification('已取消关注', 'info');
                 } else {
                     this.innerHTML = '<i class="fas fa-heart"></i> Following';
                     this.classList.remove('message-btn');
                     this.classList.add('follow-btn');
-                    showNotification('关注成功！');
+                    showNotification('关注成功！', 'success');
+                }
+            });
+            
+            // 模态框事件
+            document.getElementById('modal-close').addEventListener('click', hideConfirmModal);
+            document.getElementById('modal-cancel').addEventListener('click', hideConfirmModal);
+            document.getElementById('modal-confirm').addEventListener('click', function() {
+                if (confirmCallback) {
+                    confirmCallback();
+                }
+                hideConfirmModal();
+            });
+            
+            // 点击模态框外部关闭
+            document.getElementById('confirm-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    hideConfirmModal();
                 }
             });
             
@@ -961,7 +1388,28 @@
                 }
             `;
             document.head.appendChild(style);
+            
+            // 检查是否是新用户
+            const isNewUser = !localStorage.getItem('siriusLovisaPosts');
+            if (isNewUser) {
+                setTimeout(() => {
+                    showNotification('欢迎使用恋爱日记！记得定期备份数据哦~', 'info');
+                }, 1000);
+            }
         });
+        
+        // 添加一个简单的备份提醒
+        setInterval(() => {
+            const lastBackup = localStorage.getItem('siriusLovisaLastBackup');
+            if (!lastBackup) return;
+            
+            const lastBackupDate = new Date(lastBackup);
+            const daysSinceLastBackup = Math.floor((new Date() - lastBackupDate) / (1000 * 60 * 60 * 24));
+            
+            if (daysSinceLastBackup >= 7) {
+                showNotification('已超过7天未备份，建议立即备份数据！', 'warning');
+            }
+        }, 1000 * 60 * 60); // 每小时检查一次
     </script>
 </body>
 </html>
