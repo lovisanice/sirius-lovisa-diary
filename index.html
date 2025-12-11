@@ -867,13 +867,14 @@
             }
         }
 
-        // 模拟初始数据
+        // 模拟初始数据 - 已添加评论数
         let posts = [
             {
                 id: 1,
                 text: "今天和Lovisa一起看了日落，粉色的天空就像她的笑容一样温暖。🌇",
                 time: "2小时前",
-                likes: 245,
+                likes: 10245,
+                comments: 684,
                 liked: false,
                 avatar: "default"
             },
@@ -881,7 +882,8 @@
                 id: 2,
                 text: "Sirius为我准备的惊喜晚餐，烛光下的他格外迷人。🕯️",
                 time: "1天前",
-                likes: 512,
+                likes: 18512,
+                comments: 1234,
                 liked: true,
                 avatar: "default",
                 image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80"
@@ -890,7 +892,8 @@
                 id: 3,
                 text: "纪念我们在一起的520天。每一天都因为有你而特别。💖",
                 time: "3天前",
-                likes: 1203,
+                likes: 25203,
+                comments: 1680,
                 liked: false,
                 avatar: "default"
             }
@@ -904,7 +907,16 @@
             const lastBackup = localStorage.getItem('siriusLovisaLastBackup');
             
             if (savedPosts) {
-                posts = JSON.parse(savedPosts);
+                const parsedPosts = JSON.parse(savedPosts);
+                // 确保旧数据有评论数字段
+                posts = parsedPosts.map(post => {
+                    if (!post.hasOwnProperty('comments')) {
+                        // 为旧数据生成合理的评论数（点赞数的1/20到1/10之间）
+                        const commentRatio = 0.05 + Math.random() * 0.05;
+                        post.comments = Math.floor(post.likes * commentRatio);
+                    }
+                    return post;
+                });
             }
             
             if (savedAvatar) {
@@ -966,6 +978,17 @@
                     ? document.getElementById('avatar-img').src 
                     : '';
                 
+                // 格式化数字显示
+                const formatNumber = (num) => {
+                    if (num >= 10000) {
+                        return (num / 10000).toFixed(1) + '万';
+                    }
+                    if (num >= 1000) {
+                        return (num / 1000).toFixed(1) + '千';
+                    }
+                    return num.toString();
+                };
+                
                 // 构建帖子HTML
                 postElement.innerHTML = `
                     <div class="post-header">
@@ -984,9 +1007,11 @@
                     ${post.image ? `<img src="${post.image}" class="post-image" alt="动态图片">` : ''}
                     <div class="post-stats">
                         <div class="post-likes ${post.liked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
-                            <i class="fas fa-heart"></i> <span>${post.likes}</span>
+                            <i class="fas fa-heart"></i> <span>${formatNumber(post.likes)}</span>
                         </div>
-                        <div>💬 ${Math.floor(post.likes/10)}</div>
+                        <div>
+                            <i class="fas fa-comment"></i> <span>${formatNumber(post.comments)}</span>
+                        </div>
                     </div>
                 `;
                 
@@ -994,7 +1019,7 @@
             });
         }
 
-        // 发布新帖子
+        // 发布新帖子 - 已修改为生成随机点赞评论数
         function publishPost() {
             const postText = document.getElementById('post-text').value.trim();
             const imagePreview = document.getElementById('image-preview');
@@ -1005,11 +1030,18 @@
                 return;
             }
             
+            // 生成随机点赞数（3000-30000之间）
+            const randomLikes = Math.floor(Math.random() * 27001) + 3000;
+            // 生成随机评论数（点赞数的1/30到1/10之间）
+            const commentRatio = (1/30) + Math.random() * (1/10 - 1/30);
+            const randomComments = Math.floor(randomLikes * commentRatio);
+            
             const newPost = {
                 id: posts.length > 0 ? Math.max(...posts.map(p => p.id)) + 1 : 1,
                 text: postText,
                 time: "刚刚",
-                likes: 0,
+                likes: randomLikes,
+                comments: randomComments,
                 liked: false,
                 avatar: "default"
             };
@@ -1053,7 +1085,9 @@
             if (!post) return;
             
             post.liked = !post.liked;
-            post.likes += post.liked ? 1 : -1;
+            // 点赞时增加100-500个赞，取消时减少
+            const change = post.liked ? Math.floor(Math.random() * 401) + 100 : -Math.floor(Math.random() * 401) - 100;
+            post.likes = Math.max(0, post.likes + change);
             
             saveData();
             
@@ -1062,7 +1096,19 @@
             if (postElement) {
                 const likeElement = postElement.querySelector('.post-likes');
                 likeElement.classList.toggle('liked');
-                likeElement.querySelector('span').textContent = post.likes;
+                
+                // 重新格式化数字显示
+                const formatNumber = (num) => {
+                    if (num >= 10000) {
+                        return (num / 10000).toFixed(1) + '万';
+                    }
+                    if (num >= 1000) {
+                        return (num / 1000).toFixed(1) + '千';
+                    }
+                    return num.toString();
+                };
+                
+                likeElement.querySelector('span').textContent = formatNumber(post.likes);
             }
         }
 
